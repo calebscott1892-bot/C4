@@ -194,12 +194,19 @@ export default function C4Logo({
     else if (s === LOCKED) { setState(REVERSE); }
   }, [reduced]);
 
-  /* ── Stagger anchors ── */
+  /* ── Stagger anchors ──
+   * barDelay  → when bar starts extending (LAST draw action)
+   * barEnd    → bar fully extended: barDelay + armReveal×0.7
+   * textDelay → 50ms after bar reaches letters (impact pause)
+   * Italic letters appear 120ms after each upright starts, which is
+   * ~54% through the 220ms topple rotation — visibly mid-fall.
+   */
   const bodyDelay  = T.cReveal * 0.35;
   const barDelay   = bodyDelay + T.bodyReveal * 0.88;
-  const textDelay  = barDelay + T.armReveal * 0.28;
-  const totalFwd   = textDelay + T.studioIn + 0.14;
-  const fwdMs      = totalFwd * 1000 + 100;
+  const barEnd     = barDelay + T.armReveal * 0.7;
+  const textDelay  = barEnd + 0.05;
+  const totalFwd   = textDelay + 0.12 + 6 * 0.042 + 0.22 + 0.12;
+  const fwdMs      = totalFwd * 1000 + 150;
 
   /* ── Completion timers ── */
   useEffect(() => {
@@ -326,10 +333,10 @@ export default function C4Logo({
                  } },
     [FORWARD]: { opacity: 0, rotate: 82, x: 14, y: 8,
                  transition: {
-                   opacity: { duration: 0.04, delay: 0.20, ease: 'easeIn' },
-                   rotate:  { duration: 0.22, ease: [0.32, 0, 0.67, 0.35] },
-                   x:       { duration: 0.20, ease: [0.32, 0, 0.67, 0.35] },
-                   y:       { duration: 0.18, ease: [0.25, 0, 0.55, 0.20] },
+                   opacity: { duration: 0.04, delay: 0.18, ease: 'easeIn' },
+                   rotate:  { duration: 0.20, ease: [0.05, 0.85, 0.40, 1] },
+                   x:       { duration: 0.18, ease: [0.05, 0.85, 0.40, 1] },
+                   y:       { duration: 0.16, ease: [0.10, 0.80, 0.35, 1] },
                  } },
     [LOCKED]:  { opacity: 0, rotate: 82, x: 14, y: 8,
                  transition: { duration: 0.01 } },
@@ -357,9 +364,9 @@ export default function C4Logo({
     [IDLE]:    { opacity: 0,
                  transition: { duration: 0.06 } },
     [FORWARD]: { opacity: 1,
-                 transition: { opacity: { duration: 0.01, delay: textDelay + 0.02 },
+                 transition: { opacity: { duration: 0.01 },
                                staggerChildren: 0.042,
-                               delayChildren: textDelay + 0.02 } },
+                               delayChildren: textDelay + 0.12 } },
     [LOCKED]:  { opacity: 1,
                  transition: { duration: 0.04 } },
     [REVERSE]: { opacity: 0,
@@ -373,7 +380,7 @@ export default function C4Logo({
                  transition: { duration: 0.03 } },
     [FORWARD]: { opacity: 1, rotate: 0, x: 0, y: 0,
                  transition: {
-                   opacity: { duration: 0.02, ease: 'easeOut' },
+                   opacity: { duration: 0.08, ease: 'easeOut' },
                    rotate:  { duration: 0.22, ease: EASE_SNAP },
                    x:       { duration: 0.18, ease: EASE_SNAP },
                    y:       { duration: 0.16, ease: EASE_SNAP },
