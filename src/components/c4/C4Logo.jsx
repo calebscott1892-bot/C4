@@ -12,8 +12,8 @@ import { useTheme } from './ThemeContext';
  *                    on top with animated clipPaths. On hover, colour is
  *                    "drawn onto" the mono base directionally:
  *                      • C arc   — colour sweeps top → bottom
- *                      • 4 body  — colour sweeps top → bottom
- *                      • 4 arm   — colour extends left → right
+ *                      • 4 body  — colour sweeps top → bottom (includes stem)
+ *                      • 4 bar   — horizontal crossbar extends left → right
  *
  * LAYER 3A (upright): "Studios" upright serif letters from
  *                     "logo studios white.svg". Visible at rest.
@@ -89,9 +89,12 @@ const MARK = {
 const MARK_S = {
   fourBody: '532.7 131.46 532.69 302.44 475.49 302.44 475.49 200.55 400.48 309.51 475.49 309.51 448.59 349.88 324.97 349.88 324.97 322.16 462.48 131.46 532.7 131.46',
   cArc:     'M398.55,370.04l38.34.19c-31.17,35.46-73.18,59.48-119.42,68.29-74.25,15.4-150.05-18.24-188.79-83.79-31.75-53.21-25.41-120.98,15.63-167.31,27.45-31.48,65.93-51.08,107.4-54.71,45.66-6.38,92.16-2.64,136.22,10.98l-31.03,43.24c-25.8-5.41-52.3-6.65-78.49-3.68-36.49,1.99-69.87,21.29-89.92,52.02-11.63,23.08-14.03,49.76-6.71,74.57,10.95,39.11,41.37,69.66,80.28,80.61,46.47,9.37,94.73,2.15,136.49-20.41Z',
-  armRect:  { x: 490.27, y: 349.88, w: 42.44, h: 93.3, idleW: 42.44, extW: 90 },
+  /* Vertical post below the crossbar — always static, never animates */
+  stem: { x: 490.27, y: 349.88, w: 42.44, h: 93.3 },
+  /* Horizontal bar — extends rightward from the stem on FORWARD */
+  bar:  { x: 532.7, y: 330, h: 20, idleW: 0, extW: 32 },
   cBox: { x: 55,  y: 100, w: 400, h: 380 },
-  bBox: { x: 315, y: 125, w: 225, h: 230 },
+  bBox: { x: 315, y: 125, w: 225, h: 320 },
 };
 
 /* Individual letter paths from "logo studio as 4 MC.svg" */
@@ -193,8 +196,8 @@ export default function C4Logo({
 
   /* ── Stagger anchors ── */
   const bodyDelay  = T.cReveal * 0.35;
-  const armDelay   = bodyDelay + T.bodyReveal * 0.50;
-  const textDelay  = armDelay + T.armReveal * 0.25;
+  const barDelay   = bodyDelay + T.bodyReveal * 0.88;
+  const textDelay  = barDelay + T.armReveal * 0.28;
   const totalFwd   = textDelay + T.studioIn + 0.14;
   const fwdMs      = totalFwd * 1000 + 100;
 
@@ -224,16 +227,16 @@ export default function C4Logo({
   const clipBody = `cb-${uid}`;
   const clipArm  = `ca-${uid}`;
 
-  /* ── Arm extension variants (physical width animation) ── */
-  const armExtV = full ? {
-    [IDLE]:    { width: MARK_S.armRect.idleW,
-                 transition: { duration: T.reverse * 0.5, delay: T.reverse * 0.1, ease: EASE_IO } },
-    [FORWARD]: { width: MARK_S.armRect.extW,
-                 transition: { duration: T.armReveal, delay: armDelay, ease: [0.12, 0.9, 0.30, 1] } },
-    [LOCKED]:  { width: MARK_S.armRect.idleW,
-                 transition: { duration: 0.20, delay: 0.06, ease: EASE_IO } },
-    [REVERSE]: { width: MARK_S.armRect.idleW,
-                 transition: { duration: T.reverse * 0.4, ease: EASE_IO } },
+  /* ── Horizontal bar extension — shoots right as the LAST draw action ── */
+  const barExtV = full ? {
+    [IDLE]:    { width: MARK_S.bar.idleW,
+                 transition: { duration: T.reverse * 0.3, ease: EASE_IO } },
+    [FORWARD]: { width: MARK_S.bar.extW,
+                 transition: { duration: T.armReveal * 0.7, delay: barDelay, ease: [0.08, 0.95, 0.25, 1] } },
+    [LOCKED]:  { width: MARK_S.bar.idleW,
+                 transition: { duration: 0.18, delay: 0.10, ease: EASE_IO } },
+    [REVERSE]: { width: MARK_S.bar.idleW,
+                 transition: { duration: T.reverse * 0.25, ease: EASE_IO } },
   } : null;
 
   /* ── Clip variants for colour overlay reveals ────────
@@ -274,25 +277,25 @@ export default function C4Logo({
                  transition: { duration: T.reverse * 0.45, delay: T.reverse * 0.05, ease: EASE_IO } },
   };
 
-  /* 4 arm colour overlay: left → right */
-  const armClipW = full ? MARK_S.armRect.extW : MARK.aBox.w;
-  const aClipV = {
+  /* Horizontal bar colour overlay: left → right */
+  const barClipW = full ? MARK_S.bar.extW + 4 : MARK.aBox.w;
+  const barClipV = {
     [IDLE]:    { width: 0,
-                 transition: { duration: T.reverse * 0.45, ease: EASE_IO } },
-    [FORWARD]: { width: armClipW,
-                 transition: { duration: T.armReveal, delay: armDelay, ease: [0.12, 0.9, 0.30, 1] } },
-    [LOCKED]:  { width: armClipW,
+                 transition: { duration: T.reverse * 0.3, ease: EASE_IO } },
+    [FORWARD]: { width: barClipW,
+                 transition: { duration: T.armReveal * 0.7, delay: barDelay, ease: [0.08, 0.95, 0.25, 1] } },
+    [LOCKED]:  { width: barClipW,
                  transition: { duration: 0.06 } },
     [REVERSE]: { width: 0,
-                 transition: { duration: T.reverse * 0.35, ease: EASE_IO } },
+                 transition: { duration: T.reverse * 0.25, ease: EASE_IO } },
   };
 
   /* ── UPRIGHT Studios — visible at IDLE, topples on FORWARD ──
    * Upright serif letters from "logo studios white.svg" sit to
-   * the right of the 4's arm at IDLE.
+   * the right of the 4's crossbar at IDLE.
    *
-   * On FORWARD the arm extends left→right and the force
-   * "knocks" each upright letter over like a domino —
+   * On FORWARD the horizontal bar extends rightward and the
+   * force "knocks" each upright letter over like a domino —
    * rotating clockwise around bottom-left and fading out.
    *
    * On REVERSE the letters stand back up right→left.        */
@@ -407,14 +410,23 @@ export default function C4Logo({
         <path       d={paths.cArc}     fill={mono.cArc} />
         <polygon    points={paths.fourBody} fill={mono.fourBody} />
         {full ? (
-          <motion.rect
-            x={MARK_S.armRect.x} y={MARK_S.armRect.y}
-            height={MARK_S.armRect.h}
-            fill={mono.fourArm}
-            variants={armExtV}
-            animate={state}
-            initial={IDLE}
-          />
+          <>
+            {/* Vertical post — static, never animates */}
+            <rect
+              x={MARK_S.stem.x} y={MARK_S.stem.y}
+              width={MARK_S.stem.w} height={MARK_S.stem.h}
+              fill={mono.fourArm}
+            />
+            {/* Horizontal bar — the ONLY moving element, shoots right */}
+            <motion.rect
+              x={MARK_S.bar.x} y={MARK_S.bar.y}
+              height={MARK_S.bar.h}
+              fill={mono.fourArm}
+              variants={barExtV}
+              animate={state}
+              initial={IDLE}
+            />
+          </>
         ) : (
           <polygon points={paths.fourArm} fill={mono.fourArm} />
         )}
@@ -439,11 +451,11 @@ export default function C4Logo({
           </clipPath>
           <clipPath id={clipArm}>
             <motion.rect
-              x={full ? MARK_S.armRect.x : MARK.aBox.x}
-              y={full ? MARK_S.armRect.y : MARK.aBox.y}
+              x={full ? MARK_S.bar.x : MARK.aBox.x}
+              y={full ? MARK_S.bar.y - 2 : MARK.aBox.y}
               width={0}
-              height={full ? MARK_S.armRect.h + 10 : MARK.aBox.h}
-              variants={aClipV}
+              height={full ? MARK_S.bar.h + 6 : MARK.aBox.h}
+              variants={barClipV}
               animate={state}
               initial={IDLE}
             />
@@ -462,15 +474,25 @@ export default function C4Logo({
           clipPath={`url(#${clipBody})`}
         />
         {full ? (
-          <motion.rect
-            x={MARK_S.armRect.x} y={MARK_S.armRect.y}
-            height={MARK_S.armRect.h}
-            fill={colour.fourArm}
-            clipPath={`url(#${clipArm})`}
-            variants={armExtV}
-            animate={state}
-            initial={IDLE}
-          />
+          <>
+            {/* Stem colour — revealed by body clip (top→bottom with body) */}
+            <rect
+              x={MARK_S.stem.x} y={MARK_S.stem.y}
+              width={MARK_S.stem.w} height={MARK_S.stem.h}
+              fill={colour.fourArm}
+              clipPath={`url(#${clipBody})`}
+            />
+            {/* Bar colour — revealed left→right with bar clip */}
+            <motion.rect
+              x={MARK_S.bar.x} y={MARK_S.bar.y}
+              height={MARK_S.bar.h}
+              fill={colour.fourArm}
+              clipPath={`url(#${clipArm})`}
+              variants={barExtV}
+              animate={state}
+              initial={IDLE}
+            />
+          </>
         ) : (
           <polygon
             points={paths.fourArm}
