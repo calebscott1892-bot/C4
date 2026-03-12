@@ -34,7 +34,7 @@ export default function Footer() {
       <div className="max-w-[1400px] mx-auto px-6 md:px-12">
         <div className="py-14 md:py-18 grid grid-cols-2 md:grid-cols-4 gap-10 md:gap-6">
           <div className="col-span-2 md:col-span-1 flex flex-col items-start">
-            <C4Logo size={52} variant="full" context="footer" />
+            <C4Logo size={56} variant="full" context="footer" />
             <p className="mt-4 text-[12.5px] leading-[1.6] max-w-[220px]" style={{ color: 'var(--c4-footer-text-dim)' }}>
               Design and development studio building premium digital products.
             </p>

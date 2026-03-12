@@ -54,7 +54,7 @@ const COLOURS = {
 const T = {
   cReveal:    0.50,
   bodyReveal: 0.42,
-  armReveal:  0.30,
+  armReveal:  0.38,
   studioIn:   0.50,
   reverse:    0.55,
 };
@@ -87,7 +87,7 @@ const MARK = {
 const MARK_S = {
   fourBody: '532.7 131.46 532.69 302.44 475.49 302.44 475.49 200.55 400.48 309.51 475.49 309.51 448.59 349.88 324.97 349.88 324.97 322.16 462.48 131.46 532.7 131.46',
   cArc:     'M398.55,370.04l38.34.19c-31.17,35.46-73.18,59.48-119.42,68.29-74.25,15.4-150.05-18.24-188.79-83.79-31.75-53.21-25.41-120.98,15.63-167.31,27.45-31.48,65.93-51.08,107.4-54.71,45.66-6.38,92.16-2.64,136.22,10.98l-31.03,43.24c-25.8-5.41-52.3-6.65-78.49-3.68-36.49,1.99-69.87,21.29-89.92,52.02-11.63,23.08-14.03,49.76-6.71,74.57,10.95,39.11,41.37,69.66,80.28,80.61,46.47,9.37,94.73,2.15,136.49-20.41Z',
-  armRect:  { x: 490.27, y: 349.88, w: 42.44, h: 93.3 },
+  armRect:  { x: 490.27, y: 349.88, w: 42.44, h: 93.3, idleW: 42.44, extW: 140 },
   cBox: { x: 55,  y: 100, w: 400, h: 380 },
   bBox: { x: 315, y: 125, w: 225, h: 230 },
 };
@@ -116,8 +116,10 @@ const UPRIGHT_LETTERS = [
 ];
 
 /* Transform to position upright letters in MARK_S coordinate space.
- * Scale 0.55×, bottom-aligned with arm rect (y≈443), starting at x≈536. */
-const UPRIGHT_TRANSFORM = 'translate(352, 178) scale(0.55)';
+ * Scale 0.42×. Positioned so the S starts just past the arm's idle right edge
+ * (arm right ≈ 532.7) and the baseline aligns near the arm bottom (y≈443).
+ * Native S starts at x≈347 → 390 + 347×0.42 ≈ 536 ✓ */
+const UPRIGHT_TRANSFORM = 'translate(390, 245) scale(0.42)';
 
 /* ── Theme-aware colour resolution ───────────────────── */
 function useLogoColours(context) {
@@ -181,9 +183,9 @@ export default function C4Logo({
   /* ── Stagger anchors ── */
   const bodyDelay  = T.cReveal * 0.35;
   const armDelay   = bodyDelay + T.bodyReveal * 0.50;
-  const textDelay  = armDelay + T.armReveal * 0.45;
-  const totalFwd   = textDelay + T.studioIn + 0.12;
-  const fwdMs      = totalFwd * 1000 + 80;
+  const textDelay  = armDelay + T.armReveal * 0.55;
+  const totalFwd   = textDelay + T.studioIn + 0.14;
+  const fwdMs      = totalFwd * 1000 + 100;
 
   /* ── Completion timers ── */
   useEffect(() => {
@@ -202,14 +204,26 @@ export default function C4Logo({
   const paths = full ? MARK_S : MARK;
 
   /* ── ViewBox / sizing ── */
-  const vb = full ? '275 110 410 370' : '265 55 395 420';
-  const aspect = full ? (410 / 370) : (395 / 420);
+  const vb = full ? '50 100 600 400' : '265 55 395 420';
+  const aspect = full ? (600 / 400) : (395 / 420);
   const w = Math.round(h * aspect);
 
   /* ── Unique clip IDs ── */
   const clipC    = `cc-${uid}`;
   const clipBody = `cb-${uid}`;
   const clipArm  = `ca-${uid}`;
+
+  /* ── Arm extension variants (physical width animation) ── */
+  const armExtV = full ? {
+    [IDLE]:    { width: MARK_S.armRect.idleW,
+                 transition: { duration: T.reverse * 0.5, delay: T.reverse * 0.1, ease: EASE_IO } },
+    [FORWARD]: { width: MARK_S.armRect.extW,
+                 transition: { duration: T.armReveal, delay: armDelay, ease: [0.12, 0.9, 0.30, 1] } },
+    [LOCKED]:  { width: MARK_S.armRect.idleW,
+                 transition: { duration: 0.20, delay: 0.06, ease: EASE_IO } },
+    [REVERSE]: { width: MARK_S.armRect.idleW,
+                 transition: { duration: T.reverse * 0.4, ease: EASE_IO } },
+  } : null;
 
   /* ── Clip variants for colour overlay reveals ────────
    *
@@ -250,12 +264,12 @@ export default function C4Logo({
   };
 
   /* 4 arm colour overlay: left → right */
-  const armClipW = full ? MARK_S.armRect.w : MARK.aBox.w;
+  const armClipW = full ? MARK_S.armRect.extW : MARK.aBox.w;
   const aClipV = {
     [IDLE]:    { width: 0,
                  transition: { duration: T.reverse * 0.45, ease: EASE_IO } },
     [FORWARD]: { width: armClipW,
-                 transition: { duration: T.armReveal, delay: armDelay, ease: EASE_OUT } },
+                 transition: { duration: T.armReveal, delay: armDelay, ease: [0.12, 0.9, 0.30, 1] } },
     [LOCKED]:  { width: armClipW,
                  transition: { duration: 0.06 } },
     [REVERSE]: { width: 0,
@@ -382,10 +396,13 @@ export default function C4Logo({
         <path       d={paths.cArc}     fill={mono.cArc} />
         <polygon    points={paths.fourBody} fill={mono.fourBody} />
         {full ? (
-          <rect
+          <motion.rect
             x={MARK_S.armRect.x} y={MARK_S.armRect.y}
-            width={MARK_S.armRect.w} height={MARK_S.armRect.h}
+            height={MARK_S.armRect.h}
             fill={mono.fourArm}
+            variants={armExtV}
+            animate={state}
+            initial={IDLE}
           />
         ) : (
           <polygon points={paths.fourArm} fill={mono.fourArm} />
@@ -414,7 +431,7 @@ export default function C4Logo({
               x={full ? MARK_S.armRect.x : MARK.aBox.x}
               y={full ? MARK_S.armRect.y : MARK.aBox.y}
               width={0}
-              height={full ? MARK_S.armRect.h : MARK.aBox.h}
+              height={full ? MARK_S.armRect.h + 10 : MARK.aBox.h}
               variants={aClipV}
               animate={state}
               initial={IDLE}
@@ -434,11 +451,14 @@ export default function C4Logo({
           clipPath={`url(#${clipBody})`}
         />
         {full ? (
-          <rect
+          <motion.rect
             x={MARK_S.armRect.x} y={MARK_S.armRect.y}
-            width={MARK_S.armRect.w} height={MARK_S.armRect.h}
+            height={MARK_S.armRect.h}
             fill={colour.fourArm}
             clipPath={`url(#${clipArm})`}
+            variants={armExtV}
+            animate={state}
+            initial={IDLE}
           />
         ) : (
           <polygon

@@ -44,16 +44,13 @@ export default function NavHeader() {
         }}
       >
         <div className="max-w-[1400px] mx-auto px-5 md:px-12">
-          <div className="flex items-center justify-between h-[56px] md:h-[68px]">
-            {/* Logo with soft translucent pill — "Studios" scribes in on hover */}
+          <div className="flex items-center justify-between h-[60px] md:h-[72px]">
+            {/* Logo — clean, no bubble */}
             <Link
               to={createPageUrl('Home')}
-              className="relative flex items-center justify-center px-2.5 py-1.5 rounded-xl backdrop-blur-sm transition-all duration-300"
-              style={{ backgroundColor: 'color-mix(in srgb, var(--c4-text) 5%, transparent)' }}
-              onMouseEnter={e => e.currentTarget.style.backgroundColor = 'color-mix(in srgb, var(--c4-text) 9%, transparent)'}
-              onMouseLeave={e => e.currentTarget.style.backgroundColor = 'color-mix(in srgb, var(--c4-text) 5%, transparent)'}
+              className="relative flex items-center justify-center py-1"
             >
-              <C4Logo size={42} variant="full" context="header" />
+              <C4Logo size={48} variant="full" context="header" />
             </Link>
 
             <nav className="hidden md:flex items-center gap-7">
