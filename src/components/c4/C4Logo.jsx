@@ -42,11 +42,13 @@ const COLOURS = {
     fourBody: '#414243',
     fourArm:  '#6c6d6d',
     cArc:     '#efedec',
+    text:     '#1a1a1b',
   },
   colour: {
     fourBody: '#a30000',
     fourArm:  '#22632f',
     cArc:     '#f3f2f3',
+    text:     '#1a1a1b',
   },
 };
 
@@ -87,7 +89,7 @@ const MARK = {
 const MARK_S = {
   fourBody: '532.7 131.46 532.69 302.44 475.49 302.44 475.49 200.55 400.48 309.51 475.49 309.51 448.59 349.88 324.97 349.88 324.97 322.16 462.48 131.46 532.7 131.46',
   cArc:     'M398.55,370.04l38.34.19c-31.17,35.46-73.18,59.48-119.42,68.29-74.25,15.4-150.05-18.24-188.79-83.79-31.75-53.21-25.41-120.98,15.63-167.31,27.45-31.48,65.93-51.08,107.4-54.71,45.66-6.38,92.16-2.64,136.22,10.98l-31.03,43.24c-25.8-5.41-52.3-6.65-78.49-3.68-36.49,1.99-69.87,21.29-89.92,52.02-11.63,23.08-14.03,49.76-6.71,74.57,10.95,39.11,41.37,69.66,80.28,80.61,46.47,9.37,94.73,2.15,136.49-20.41Z',
-  armRect:  { x: 490.27, y: 349.88, w: 42.44, h: 93.3, idleW: 42.44, extW: 140 },
+  armRect:  { x: 490.27, y: 349.88, w: 42.44, h: 93.3, idleW: 42.44, extW: 90 },
   cBox: { x: 55,  y: 100, w: 400, h: 380 },
   bBox: { x: 315, y: 125, w: 225, h: 230 },
 };
@@ -116,10 +118,18 @@ const UPRIGHT_LETTERS = [
 ];
 
 /* Transform to position upright letters in MARK_S coordinate space.
- * Scale 0.42×. Positioned so the S starts just past the arm's idle right edge
- * (arm right ≈ 532.7) and the baseline aligns near the arm bottom (y≈443).
- * Native S starts at x≈347 → 390 + 347×0.42 ≈ 536 ✓ */
-const UPRIGHT_TRANSFORM = 'translate(390, 245) scale(0.42)';
+ * Scale 1.5× — large and prominent, matching the reference image.
+ * S left: 18 + 347×1.5 = 538.5 (just past arm right edge 532.71)
+ * Cap:  -273 + 405×1.5 = 334.5 (above arm at 350)
+ * Base: -273 + 482×1.5 = 450   (below arm bottom 443) */
+const UPRIGHT_TRANSFORM = 'translate(18, -273) scale(1.5)';
+
+/* Transform to position italic letters at the SAME screen size/position
+ * as the upright letters. Native italic bounds ≈ (465–600, 309–347).
+ * Scale 2.87× to match upright dimensions.
+ * Left: -797 + 465×2.87 = 537.55   Right: -797 + 600×2.87 = 925
+ * Top:  -547 + 309×2.87 = 339.8     Bot:   -547 + 347×2.87 = 448.9 */
+const ITALIC_TRANSFORM = 'translate(-797, -547) scale(2.87)';
 
 /* ── Theme-aware colour resolution ───────────────────── */
 function useLogoColours(context) {
@@ -130,6 +140,7 @@ function useLogoColours(context) {
       m.fourBody = '#9a9b9c';
       m.fourArm  = '#8a8b8c';
       m.cArc     = '#d0cecc';
+      m.text     = '#e8e6e3';
     }
     return { mono: m, colour: COLOURS.colour };
   }, [isDark, context]);
@@ -183,7 +194,7 @@ export default function C4Logo({
   /* ── Stagger anchors ── */
   const bodyDelay  = T.cReveal * 0.35;
   const armDelay   = bodyDelay + T.bodyReveal * 0.50;
-  const textDelay  = armDelay + T.armReveal * 0.55;
+  const textDelay  = armDelay + T.armReveal * 0.25;
   const totalFwd   = textDelay + T.studioIn + 0.14;
   const fwdMs      = totalFwd * 1000 + 100;
 
@@ -204,8 +215,8 @@ export default function C4Logo({
   const paths = full ? MARK_S : MARK;
 
   /* ── ViewBox / sizing ── */
-  const vb = full ? '50 100 600 400' : '265 55 395 420';
-  const aspect = full ? (600 / 400) : (395 / 420);
+  const vb = full ? '50 100 880 400' : '265 55 395 420';
+  const aspect = full ? (880 / 400) : (395 / 420);
   const w = Math.round(h * aspect);
 
   /* ── Unique clip IDs ── */
@@ -285,7 +296,7 @@ export default function C4Logo({
    * rotating clockwise around bottom-left and fading out.
    *
    * On REVERSE the letters stand back up right→left.        */
-  const uprightFill = mono.fourArm;
+  const uprightFill = mono.text;
 
   const ugV = {
     [IDLE]:    { opacity: 1,
@@ -310,14 +321,14 @@ export default function C4Logo({
                    x:       { duration: 0.20, ease: EASE_SNAP },
                    y:       { duration: 0.18, ease: EASE_SNAP },
                  } },
-    [FORWARD]: { opacity: 0, rotate: 82, x: 8, y: 5,
+    [FORWARD]: { opacity: 0, rotate: 82, x: 14, y: 8,
                  transition: {
                    opacity: { duration: 0.04, delay: 0.20, ease: 'easeIn' },
                    rotate:  { duration: 0.22, ease: [0.32, 0, 0.67, 0.35] },
                    x:       { duration: 0.20, ease: [0.32, 0, 0.67, 0.35] },
                    y:       { duration: 0.18, ease: [0.25, 0, 0.55, 0.20] },
                  } },
-    [LOCKED]:  { opacity: 0, rotate: 82, x: 8, y: 5,
+    [LOCKED]:  { opacity: 0, rotate: 82, x: 14, y: 8,
                  transition: { duration: 0.01 } },
     [REVERSE]: { opacity: 1, rotate: 0, x: 0, y: 0,
                  transition: {
@@ -337,7 +348,7 @@ export default function C4Logo({
    * then snapping to rest.
    *
    * On REVERSE they retract while uprights stand back up.  */
-  const italicFill = colour.fourArm;
+  const italicFill = mono.text;
 
   const igV = {
     [IDLE]:    { opacity: 0,
@@ -355,7 +366,7 @@ export default function C4Logo({
   };
 
   const ilV = {
-    [IDLE]:    { opacity: 0, rotate: 82, x: 6, y: 4,
+    [IDLE]:    { opacity: 0, rotate: 82, x: 16, y: 10,
                  transition: { duration: 0.03 } },
     [FORWARD]: { opacity: 1, rotate: 0, x: 0, y: 0,
                  transition: {
@@ -366,7 +377,7 @@ export default function C4Logo({
                  } },
     [LOCKED]:  { opacity: 1, rotate: 0, x: 0, y: 0,
                  transition: { duration: 0.04 } },
-    [REVERSE]: { opacity: 0, rotate: 40, x: 4, y: 2,
+    [REVERSE]: { opacity: 0, rotate: 40, x: 10, y: 6,
                  transition: {
                    opacity: { duration: 0.03, delay: 0.06 },
                    rotate:  { duration: 0.10, ease: [0.32, 0, 0.67, 0.35] },
@@ -494,24 +505,26 @@ export default function C4Logo({
 
         {/* ─── LAYER 3B: Italic Studios — integrated into the 4 ─── */}
         {full && (
-          <motion.g
-            variants={igV}
-            animate={state}
-            initial={IDLE}
-          >
-            {LETTERS.map((d, i) => (
-              <motion.path
-                key={`i-${i}`}
-                d={d}
-                variants={ilV}
-                style={{
-                  fill: italicFill,
-                  transformOrigin: 'left bottom',
-                  transformBox: 'fill-box',
-                }}
-              />
-            ))}
-          </motion.g>
+          <g transform={ITALIC_TRANSFORM}>
+            <motion.g
+              variants={igV}
+              animate={state}
+              initial={IDLE}
+            >
+              {LETTERS.map((d, i) => (
+                <motion.path
+                  key={`i-${i}`}
+                  d={d}
+                  variants={ilV}
+                  style={{
+                    fill: italicFill,
+                    transformOrigin: 'left bottom',
+                    transformBox: 'fill-box',
+                  }}
+                />
+              ))}
+            </motion.g>
+          </g>
         )}
       </svg>
     </motion.span>
