@@ -195,16 +195,16 @@ export default function C4Logo({
   }, [reduced]);
 
   /* ── Stagger anchors ──
-   * barDelay  → when bar starts extending (LAST draw action)
-   * barEnd    → bar fully extended: barDelay + armReveal×0.7
-   * textDelay → 50ms after bar reaches letters (impact pause)
-   * Italic letters appear 120ms after each upright starts, which is
-   * ~54% through the 220ms topple rotation — visibly mid-fall.
+   * bodyDelay → when 4 body starts drawing
+   * barDelay  → when bar starts extending (waits for body to fully complete)
+   * textDelay → the exact moment the bar reaches the first letter gap (5.79 / 32 units)
+   * Italic letters appear 120ms after each upright starts, visibly mid-fall.
    */
   const bodyDelay  = T.cReveal * 0.35;
-  const barDelay   = bodyDelay + T.bodyReveal * 0.88;
-  const barEnd     = barDelay + T.armReveal * 0.7;
-  const textDelay  = barEnd + 0.05;
+  const barDelay   = bodyDelay + T.bodyReveal; // body completes fully
+  const barTravelDuration = T.armReveal * 0.7;
+  const barArrivalGapFraction = 5.79 / 32; 
+  const textDelay  = barDelay + (barTravelDuration * barArrivalGapFraction);
   const totalFwd   = textDelay + 0.12 + 6 * 0.042 + 0.22 + 0.12;
   const fwdMs      = totalFwd * 1000 + 150;
 
