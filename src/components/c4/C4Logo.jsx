@@ -195,16 +195,25 @@ export default function C4Logo({
   }, [reduced]);
 
   /* ── Stagger anchors ──
-   * barDelay  → when bar starts extending (LAST draw action)
-   * barEnd    → bar fully extended: barDelay + armReveal×0.7
-   * textDelay → 50ms after bar reaches letters (impact pause)
+   * bodyEnd   → body draw completes
+   * barDelay  → bar fires AFTER body finishes (last draw action)
+   * contactT  → bar first reaches the first upright letter
+   * textDelay → impact pause after first contact; domino begins
+   * barEnd    → bar fully extended (continues past first contact
+   *             for visual force — Option B)
    * Italic letters appear 120ms after each upright starts, which is
    * ~54% through the 220ms topple rotation — visibly mid-fall.
    */
   const bodyDelay  = T.cReveal * 0.35;
-  const barDelay   = bodyDelay + T.bodyReveal * 0.88;
-  const barEnd     = barDelay + T.armReveal * 0.7;
-  const textDelay  = barEnd + 0.05;
+  const bodyEnd    = bodyDelay + T.bodyReveal;
+  const barDelay   = bodyEnd;
+  const barDur     = T.armReveal * 0.7;
+  /* Bar x = 532.7, first letter x ≈ 538.5 → 5.8 px = ~18% of extW (32).
+   * With easing [0.08,0.95,0.25,1] the bar covers that 18% of distance
+   * in only ~2% of the animation duration (the curve starts very fast). */
+  const contactT   = barDelay + barDur * 0.02;
+  const textDelay  = contactT + 0.04;
+  const barEnd     = barDelay + barDur;
   const totalFwd   = textDelay + 0.12 + 6 * 0.042 + 0.22 + 0.12;
   const fwdMs      = totalFwd * 1000 + 150;
 
