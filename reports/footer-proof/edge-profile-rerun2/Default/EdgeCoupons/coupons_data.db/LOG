@@ -1,0 +1,5 @@
+2026/03/15-22:54:41.953 911c Creating DB C:\Users\belac\Downloads\C4-main\C4-main\reports\footer-proof\edge-profile-rerun2\Default\EdgeCoupons/coupons_data.db since it was missing.
+2026/03/15-22:54:41.976 911c Reusing MANIFEST C:\Users\belac\Downloads\C4-main\C4-main\reports\footer-proof\edge-profile-rerun2\Default\EdgeCoupons/coupons_data.db/MANIFEST-000001
+2026/03/15-22:54:42.065 3e84 Level-0 table #5: started
+2026/03/15-22:54:42.069 3e84 Level-0 table #5: 681601 bytes OK
+2026/03/15-22:54:42.073 3e84 Delete type=0 #3

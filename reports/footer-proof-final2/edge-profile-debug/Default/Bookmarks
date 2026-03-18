@@ -1,0 +1,73 @@
+{
+   "checksum": "c83ab9092965d8532d1d3fca890bbdb7",
+   "roots": {
+      "bookmark_bar": {
+         "children": [ {
+            "date_added": "13404195791705357",
+            "date_last_used": "0",
+            "guid": "6aa1f191-a83b-4d28-a272-731c9460a275",
+            "id": "7",
+            "name": "LMS",
+            "show_icon": false,
+            "source": "sync",
+            "type": "url",
+            "url": "https://lms.uwa.edu.au/ultra/institution-page",
+            "visit_count": 1
+         }, {
+            "date_added": "13404195863858953",
+            "date_last_used": "0",
+            "guid": "190dac3f-e800-4e5e-9e5b-083ab67a566f",
+            "id": "8",
+            "name": "studentConnect",
+            "show_icon": false,
+            "source": "sync",
+            "type": "url",
+            "url": "https://student.sims.uwa.edu.au/connect/webconnect",
+            "visit_count": 1
+         } ],
+         "date_added": "13418059790999048",
+         "date_last_used": "0",
+         "date_modified": "13404195863858953",
+         "guid": "0bc5d13f-2cba-5d74-951f-3f233fe6c908",
+         "id": "1",
+         "name": "Favourites bar",
+         "source": "unknown",
+         "type": "folder"
+      },
+      "other": {
+         "children": [  ],
+         "date_added": "13418059790999048",
+         "date_last_used": "0",
+         "date_modified": "0",
+         "guid": "82b081ec-3dd3-529c-8475-ab6c344590dd",
+         "id": "2",
+         "name": "Other favourites",
+         "source": "unknown",
+         "type": "folder"
+      },
+      "synced": {
+         "children": [  ],
+         "date_added": "13418059790999048",
+         "date_last_used": "0",
+         "date_modified": "0",
+         "guid": "4cf2e351-0e85-532b-bb37-df045d8f8d0f",
+         "id": "3",
+         "name": "Mobile favourites",
+         "source": "unknown",
+         "type": "folder"
+      },
+      "workspaces_v2": {
+         "children": [  ],
+         "date_added": "13418059790999048",
+         "date_last_used": "0",
+         "date_modified": "0",
+         "guid": "75aa6670-344f-549d-b742-660f029506ab",
+         "id": "5",
+         "name": "Workspaces",
+         "source": "unknown",
+         "type": "folder"
+      }
+   },
+   "sync_metadata": "CkEKHgiIgQISCEEI9fGcAQAAKg4QABgBIAAoBjAAOABAABIAKhhIMy9RTHdDS0gvWmJxL0FPSlRNam5BPT1IA6AGDBKOAQgFEokBChx3UkJyWkwrNlBBOWF2S2dqTlA3SlhETGNmdnM9EiQ0NjlkY2YwOS1kZjhiLTVkMTktOThmYy0wN2UyMGQwNmMwNTQYACAAKAAwiLOYpJszOMW1mKSbM0DFtZikmzNKHG5teDY1c1FEdnhJOFRnRWV2K0ErbnR0b1NuND1aAGUAAAAAwj4CYAASrQEICBKoAQocdFdWbnlyYkQyOHZMTjRCRk54K0pHdklMZjhvPRIkMTkwZGFjM2YtZTgwMC00ZTVlLTllNWItMDgzYWI2N2E1NjZmGAAgACgAMPHc+7ybMzi/vvu8mzNAv777vJszShxNWjBpbW1XNVlVN0dYam8yUDRYeS9nMWJUdEU9Wh8iHfdOTXFibWIySS8zMmp5dm5TdkRnWm5YLys5U1k9ZQAAAADCPgJgBRKOAQgCEokBChxZY1NUb252RVNQd3FDczRMMmNyVmh2NjhMOTg9EiQxNDkzNWUwZi03ZTgwLTU0ZTAtYjM3My1jOWVmODY4ZWI0NGIYACAAKAAwtvXpi8cwOOD66YvHMEDg+umLxzBKHG9QVmtod0JSYlY2NUtDV1IyK0lPTkhXb091OD1aAGUAAAAAwj4CYAASjgEIAxKJAQocbmpnRHU4OGVDcnZYcDg2cEQ3ZkhHY3FGcDg4PRIkMzE3ZmZkZmYtNGJlNi01YjE1LWFjNTItNzIyYjJmYTAxY2NmGAAgACgAMLv16YvHMDjs++mLxzBA7Pvpi8cwShx5ek5CMDFjbjU0QTdjUlUwdVQrL1BnbVR0VW89WgBlAAAAAMI+AmAAEq0BCAcSqAEKHDBJQnRrTmpveiszWDFpRlpzb252V3E3bkhxcz0SJDZhYTFmMTkxLWE4M2ItNGQyOC1hMjcyLTczMWM5NDYwYTI3NRgAIAAoADDUq/e8mzM4jIr3vJszQIyK97ybM0ocS2REWFY4NXNVMklWL2lTSFlYRzFrL0hObWtjPVofIh3uVmx1UXV2YktOSnlYQk5oQ09VenZVZ3RWTTI0PWWahM2Ywj4CYAUSjgEIARKJAQoceXhKLzZmdmtlY3I3a3A1RVF6QjR0V0xwZGJFPRIkYTYxMTg3NjgtOGY2YS01YTZmLTgzMWMtODk4ZTgzNTI2NDE4GAAgACgAMLX16YvHMDjB+umLxzBAwfrpi8cwShxhUkNXTGdoRjliNUlucUtJRHZ1Si9qdlFrRmM9WgBlAAAAAMI+AmAAMAA4AA==",
+   "version": 1
+}
